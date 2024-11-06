@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import SingleCard from "../../components/SingleCard/SingleCard";
 
@@ -17,7 +17,6 @@ const GamePage = () => {
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [disabled, setDisabled] = useState(false);
-  //const [unmatchedCards, setUnmatchedCards]
 
   const shuffleCards = () => {
     const shuffledCards = [...cardImages, ...cardImages]
@@ -33,6 +32,22 @@ const GamePage = () => {
   const handleChoice = (card) => {
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
+
+  const resetTurn = () => {
+    setChoiceOne(null);
+    setChoiceTwo(null);
+    setTurns((prevTurns) => prevTurns + 1);
+    setDisabled(false);
+  };
+
+  const countUnmatchedCards = useCallback(() => {
+    if (turns !== 0) {
+      const unmatchedCards = cards.filter((card) => !card.matched);
+      if (unmatchedCards.length === 0) {
+        console.log("No unmatched cards");
+      }
+    }
+  }, [cards, turns]);
 
   useEffect(() => {
     if (choiceOne && choiceTwo) {
@@ -54,16 +69,13 @@ const GamePage = () => {
     }
   }, [choiceOne, choiceTwo]);
 
-  const resetTurn = () => {
-    setChoiceOne(null);
-    setChoiceTwo(null);
-    setTurns((prevTurns) => prevTurns + 1);
-    setDisabled(false);
-  };
-
   useEffect(() => {
     shuffleCards();
   }, []);
+
+  useEffect(() => {
+    countUnmatchedCards();
+  }, [countUnmatchedCards]);
 
   return (
     <div>
