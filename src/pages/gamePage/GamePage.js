@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 
 import SingleCard from "../../components/SingleCard/SingleCard";
 
+import { getQuestion } from "../../apis/gamePage";
+
 const cardImages = [
   { src: "/img/BunnyHat.png", matched: false },
   { src: "/img/Coin.png", matched: false },
@@ -18,6 +20,11 @@ const GamePage = () => {
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [disabled, setDisabled] = useState(false);
 
+  const [isQuestionLoading, setIsQuestionLoading] = useState(false);
+  const [questionData, setQuestionData] = useState(null);
+  const [userAnswer, setUserAnswer] = useState(0);
+  const [userAnswerMessage, setUserAnswerMessage] = useState("");
+
   const shuffleCards = () => {
     const shuffledCards = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
@@ -33,6 +40,33 @@ const GamePage = () => {
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
 
+  const fetchQuestionData = async () => {
+    try {
+      setIsQuestionLoading(true);
+      const response = await getQuestion();
+      setQuestionData(response.data);
+    } catch (error) {
+      //error scenario
+    } finally {
+      setIsQuestionLoading(false);
+    }
+  };
+
+  const handleUserAnswerSubmit = () => {
+    //if (typeof userAnswer === "number") {
+    if (userAnswer) {
+      if (parseInt(userAnswer) === questionData.solution) {
+        setQuestionData(null);
+        shuffleCards();
+        setUserAnswerMessage("");
+      } else {
+        setUserAnswerMessage("Your Answer is incorrect");
+      }
+    } else {
+      setUserAnswerMessage("Please Enter a valid answer");
+    }
+  };
+
   const resetTurn = () => {
     setChoiceOne(null);
     setChoiceTwo(null);
@@ -40,11 +74,11 @@ const GamePage = () => {
     setDisabled(false);
   };
 
-  const countUnmatchedCards = useCallback(() => {
+  const countUnmatchedCards = useCallback(async () => {
     if (turns !== 0) {
       const unmatchedCards = cards.filter((card) => !card.matched);
       if (unmatchedCards.length === 0) {
-        console.log("No unmatched cards");
+        await fetchQuestionData();
       }
     }
   }, [cards, turns]);
@@ -79,20 +113,37 @@ const GamePage = () => {
 
   return (
     <div>
-      <h1> Memory Game </h1>
-      <button onClick={shuffleCards}>New game</button>
-      <div className="card-grid">
-        {cards.map((card) => (
-          <SingleCard
-            key={card.id}
-            card={card}
-            handleChoice={handleChoice}
-            flipped={card === choiceOne || card === choiceTwo || card.matched}
-            disabled={disabled}
+      {!questionData ? (
+        <>
+          <h1> Memory Game </h1>
+          <button onClick={shuffleCards}>New game</button>
+          <div className="card-grid">
+            {cards.map((card) => (
+              <SingleCard
+                key={card.id}
+                card={card}
+                handleChoice={handleChoice}
+                flipped={
+                  card === choiceOne || card === choiceTwo || card.matched
+                }
+                disabled={disabled}
+              />
+            ))}
+          </div>
+          <p> Turns : {turns} </p>
+        </>
+      ) : (
+        <>
+          <img src={questionData.question} />
+          answer{" "}
+          <input
+            type="number"
+            onChange={(event) => setUserAnswer(event.target.value)}
           />
-        ))}
-      </div>
-      <p> Turns : {turns} </p>
+          <button onClick={handleUserAnswerSubmit}>Submit</button>
+          {userAnswerMessage}
+        </>
+      )}
     </div>
   );
 };
