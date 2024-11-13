@@ -178,6 +178,7 @@ const GamePage = () => {
           )}
         </>
       )}
+      <p> Timer : {gameTimer} </p>
     </div>
   );
 };
