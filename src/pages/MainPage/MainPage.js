@@ -1,15 +1,20 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-function MainPage() {
+import { routeHelper } from "../../helpers/routeHelper";
+
+const MainPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div>
-      <>
-        <button>New Game</button>
-        <buton>How To Play</buton>
-        <button>Leaderboards</button>
-      </>
+      <button onClick={() => navigate(routeHelper.GAMEPAGE.PATH)}>
+        New Game
+      </button>
+      <button>How To Play</button>
+      <button>Leaderboards</button>
     </div>
   );
-}
+};
 
 export default MainPage;
