@@ -25,6 +25,9 @@ const GamePage = () => {
   const [userAnswer, setUserAnswer] = useState(0);
   const [userAnswerMessage, setUserAnswerMessage] = useState("");
 
+  const [gameTimer, setGameTimer] = useState(0);
+  const [isGameTimerRunning, setIsGameTimerRunning] = useState(true);
+
   const shuffleCards = () => {
     const shuffledCards = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
@@ -53,12 +56,12 @@ const GamePage = () => {
   };
 
   const handleUserAnswerSubmit = () => {
-    //if (typeof userAnswer === "number") {
     if (userAnswer) {
       if (parseInt(userAnswer) === questionData.solution) {
         setQuestionData(null);
         shuffleCards();
         setUserAnswerMessage("");
+        resetTimer();
       } else {
         setUserAnswerMessage("Your Answer is incorrect");
       }
@@ -82,6 +85,11 @@ const GamePage = () => {
       }
     }
   }, [cards, turns]);
+
+  const resetTimer = () => {
+    setGameTimer(0);
+    setIsGameTimerRunning(true);
+  };
 
   useEffect(() => {
     if (choiceOne && choiceTwo) {
@@ -111,12 +119,32 @@ const GamePage = () => {
     countUnmatchedCards();
   }, [countUnmatchedCards]);
 
+  useEffect(() => {
+    let interval;
+    if (isGameTimerRunning) {
+      interval = setInterval(() => {
+        setGameTimer((prevTime) => prevTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [isGameTimerRunning]);
+
   return (
     <div>
       {!questionData ? (
         <>
           <h1> Memory Game </h1>
-          <button onClick={shuffleCards}>New game</button>
+          <button
+            onClick={() => {
+              shuffleCards();
+              resetTimer();
+            }}
+          >
+            New game
+          </button>
           <div className="card-grid">
             {cards.map((card) => (
               <SingleCard
@@ -134,14 +162,20 @@ const GamePage = () => {
         </>
       ) : (
         <>
-          <img src={questionData.question} />
-          answer{" "}
-          <input
-            type="number"
-            onChange={(event) => setUserAnswer(event.target.value)}
-          />
-          <button onClick={handleUserAnswerSubmit}>Submit</button>
-          {userAnswerMessage}
+          {isQuestionLoading ? (
+            "Loading..."
+          ) : (
+            <>
+              <img src={questionData.question} />
+              answer{" "}
+              <input
+                type="number"
+                onChange={(event) => setUserAnswer(event.target.value)}
+              />
+              <button onClick={handleUserAnswerSubmit}>Submit</button>
+              {userAnswerMessage}
+            </>
+          )}
         </>
       )}
     </div>
