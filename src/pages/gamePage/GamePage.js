@@ -91,6 +91,15 @@ const GamePage = () => {
     setIsGameTimerRunning(true);
   };
 
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
   useEffect(() => {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
@@ -166,7 +175,7 @@ const GamePage = () => {
             "Loading..."
           ) : (
             <>
-              <img src={questionData.question} />
+              <img src={questionData.question} alt="question_img" />
               answer{" "}
               <input
                 type="number"
@@ -178,7 +187,7 @@ const GamePage = () => {
           )}
         </>
       )}
-      <p> Timer : {gameTimer} </p>
+      <p> Time : {formatTime(gameTimer)} </p>
     </div>
   );
 };
