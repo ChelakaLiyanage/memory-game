@@ -6,7 +6,11 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { routeHelper } from "../helpers/routeHelper";
+
+import { getQuestion } from "../apis/gamePage";
 
 export const GamePageContext = createContext();
 
@@ -21,24 +25,56 @@ const cardImages = [
 
 const GamePageProvider = (props) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { children } = props;
   const { difficulty } = location.state || { difficulty: "normal" };
 
   const [cards, setCards] = useState([]);
   const [turns, setTurns] = useState(
-    difficulty === "hard" ? 15 : difficulty === "normal" ? 5 : 35
+    difficulty === "hard" ? 15 : difficulty === "normal" ? 25 : 35
   );
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [disabled, setDisabled] = useState(false);
+  const [gameMode, setGameMode] = useState("card");
 
   const [gameTimer, setGameTimer] = useState(
-    difficulty === "hard" ? 30 : difficulty === "normal" ? 15 : 90
+    difficulty === "hard" ? 30 : difficulty === "normal" ? 60 : 90
   );
   const [isGameTimerRunning, setIsGameTimerRunning] = useState(true);
 
-  const shuffleCards = () => {
+  const [isQuestionLoading, setIsQuestionLoading] = useState(false);
+  const [questionData, setQuestionData] = useState(null);
+  const [userAnswer, setUserAnswer] = useState(0);
+  const [userAnswerMessage, setUserAnswerMessage] = useState("");
+
+  const fetchQuestionData = async () => {
+    try {
+      setIsQuestionLoading(true);
+      const response = await getQuestion();
+      setQuestionData(response.data);
+    } catch (error) {
+      //error scenario
+    } finally {
+      setIsQuestionLoading(false);
+    }
+  };
+
+  const handleUserAnswerSubmit = useCallback(() => {
+    if (userAnswer) {
+      if (parseInt(userAnswer) === questionData.solution) {
+        setQuestionData(null);
+        setUserAnswerMessage("");
+      } else {
+        setUserAnswerMessage("Your Answer is incorrect");
+      }
+    } else {
+      setUserAnswerMessage("Please Enter a valid answer");
+    }
+  }, [questionData, userAnswer]);
+
+  const shuffleCards = useCallback(() => {
     const shuffledCards = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
       .map((card) => ({ ...card, id: Math.random() }));
@@ -46,8 +82,8 @@ const GamePageProvider = (props) => {
     setChoiceOne(null);
     setChoiceTwo(null);
     setCards(shuffledCards);
-    setTurns(difficulty === "hard" ? 15 : difficulty === "normal" ? 5 : 35);
-  };
+    setTurns(difficulty === "hard" ? 15 : difficulty === "normal" ? 25 : 35);
+  }, [difficulty]);
 
   const resetTurn = () => {
     setChoiceOne(null);
@@ -56,14 +92,70 @@ const GamePageProvider = (props) => {
     setDisabled(false);
   };
 
-  const handleChoice = (card) => {
-    choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
-  };
+  const handleChoice = useCallback(
+    (card) => {
+      choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
+    },
+    [choiceOne]
+  );
 
   const resetTimer = () => {
     setGameTimer(0);
     setIsGameTimerRunning(true);
   };
+
+  const handleQuitGame = useCallback(() => {
+    navigate(routeHelper.MAINPAGE.PATH);
+  }, [navigate]);
+
+  const countUnmatchedCards = useCallback(async () => {
+    console.log({ cards });
+    if (turns > 0 && cards.length > 0) {
+      const unmatchedCards = cards.filter((card) => !card.matched);
+      console.log(unmatchedCards);
+      if (unmatchedCards.length > 0) {
+        return;
+      } else {
+        setGameMode("math");
+        await fetchQuestionData();
+      }
+    }
+  }, [cards, turns]);
+
+  useEffect(() => {
+    shuffleCards();
+  }, [shuffleCards]);
+
+  useEffect(() => {
+    countUnmatchedCards();
+  }, [countUnmatchedCards, cards]);
+
+  useEffect(() => {
+    if (choiceOne && choiceTwo) {
+      setDisabled(true);
+      if (choiceOne.src === choiceTwo.src) {
+        setCards((prevCards) => {
+          return prevCards.map((card) => {
+            if (card.src === choiceOne.src) {
+              return { ...card, matched: true };
+            } else {
+              return card;
+            }
+          });
+        });
+        resetTurn();
+      } else {
+        setTimeout(() => resetTurn(), 1000);
+      }
+    }
+  }, [choiceOne, choiceTwo]);
+
+  useEffect(() => {
+    if (turns === 0) {
+      alert("You are out of turns. Game Over!");
+      navigate(routeHelper.MAINPAGE.PATH);
+    }
+  }, [turns, navigate]);
 
   useEffect(() => {
     let interval;
@@ -73,7 +165,7 @@ const GamePageProvider = (props) => {
           if (prevTime <= 0) {
             clearInterval(interval);
             alert("Time's up! Game Over.");
-            // Handle game over logic here (e.g., navigate back to main menu or reset game)
+            navigate(routeHelper.MAINPAGE.PATH);
             return 0;
           }
           return prevTime - 1;
@@ -84,7 +176,7 @@ const GamePageProvider = (props) => {
     }
 
     return () => clearInterval(interval);
-  }, [isGameTimerRunning]);
+  }, [isGameTimerRunning, navigate]);
 
   const values = useMemo(
     () => ({
@@ -100,6 +192,13 @@ const GamePageProvider = (props) => {
       handleChoice,
       gameTimer,
       resetTimer,
+      handleQuitGame,
+      gameMode,
+      questionData,
+      setUserAnswer,
+      handleUserAnswerSubmit,
+      userAnswerMessage,
+      isQuestionLoading,
     }),
     [
       cards,
@@ -110,6 +209,13 @@ const GamePageProvider = (props) => {
       shuffleCards,
       handleChoice,
       gameTimer,
+      handleQuitGame,
+      gameMode,
+      questionData,
+      setUserAnswer,
+      handleUserAnswerSubmit,
+      userAnswerMessage,
+      isQuestionLoading,
     ]
   );
 
