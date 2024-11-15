@@ -1,6 +1,6 @@
 import { useGamePageContext } from "../../providers/GamePageProvider";
 
-import SingleCard from "../SingleCard/SingleCard";
+import SingleCard from "../singleCard/SingleCard";
 
 const CardGame = () => {
   const {

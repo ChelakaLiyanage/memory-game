@@ -1,8 +1,8 @@
 import GamePageProvider from "../../providers/GamePageProvider";
 
-import CardGame from "../../components/CardGame/CardGame";
-import MathGame from "../../components/MathGame/MathGame";
-import GameTimer from "../../components/GameTimer/GameTimer";
+import CardGame from "../../components/cardGame/CardGame";
+import MathGame from "../../components/mathGame/MathGame";
+import GameTimer from "../../components/gameTimer/GameTimer";
 
 const GamePage = () => {
   return (
