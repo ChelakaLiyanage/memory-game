@@ -12,6 +12,8 @@ import { routeHelper } from "../helpers/routeHelper";
 
 import { getQuestion } from "../apis/gamePage";
 
+import { showGameCompleteAlert } from "../utils/alerts";
+
 export const GamePageContext = createContext();
 
 const cardImages = [
@@ -46,7 +48,7 @@ const GamePageProvider = (props) => {
 
   const [isQuestionLoading, setIsQuestionLoading] = useState(false);
   const [questionData, setQuestionData] = useState(null);
-  const [userAnswer, setUserAnswer] = useState(0);
+  const [userAnswer, setUserAnswer] = useState(null);
   const [userAnswerMessage, setUserAnswerMessage] = useState("");
 
   const fetchQuestionData = async () => {
@@ -61,10 +63,35 @@ const GamePageProvider = (props) => {
     }
   };
 
+  const calculateGameScore = useCallback(
+    (time, turns) => {
+      const baseGameScore =
+        difficulty === "hard" ? 3000 : difficulty === "normal" ? 2000 : 1000;
+      const mathGameScore = 500;
+      const turnScoreMultiplier =
+        difficulty === "hard" ? 5 : difficulty === "normal" ? 2.5 : 1;
+      const timeScoreMultiplier =
+        difficulty === "hard" ? 5 : difficulty === "normal" ? 2.5 : 1;
+
+      return (
+        baseGameScore +
+        mathGameScore +
+        turns * turnScoreMultiplier +
+        time * timeScoreMultiplier
+      );
+    },
+    [difficulty]
+  );
+
   const handleUserAnswerSubmit = useCallback(() => {
     if (userAnswer) {
       if (parseInt(userAnswer) === questionData.solution) {
         setQuestionData(null);
+        setIsGameTimerRunning(false);
+        showGameCompleteAlert(
+          `Your score is: ${calculateGameScore(gameTimer, turns)} `,
+          () => navigate(routeHelper.MAINPAGE.PATH)
+        );
         setUserAnswerMessage("");
       } else {
         setUserAnswerMessage("Your Answer is incorrect");
@@ -72,7 +99,14 @@ const GamePageProvider = (props) => {
     } else {
       setUserAnswerMessage("Please Enter a valid answer");
     }
-  }, [questionData, userAnswer]);
+  }, [
+    questionData,
+    userAnswer,
+    gameTimer,
+    turns,
+    calculateGameScore,
+    navigate,
+  ]);
 
   const shuffleCards = useCallback(() => {
     const shuffledCards = [...cardImages, ...cardImages]
@@ -109,10 +143,9 @@ const GamePageProvider = (props) => {
   }, [navigate]);
 
   const countUnmatchedCards = useCallback(async () => {
-    console.log({ cards });
     if (turns > 0 && cards.length > 0) {
       const unmatchedCards = cards.filter((card) => !card.matched);
-      console.log(unmatchedCards);
+
       if (unmatchedCards.length > 0) {
         return;
       } else {
@@ -191,10 +224,12 @@ const GamePageProvider = (props) => {
       resetTurn,
       handleChoice,
       gameTimer,
+      isGameTimerRunning,
       resetTimer,
       handleQuitGame,
       gameMode,
       questionData,
+      userAnswer,
       setUserAnswer,
       handleUserAnswerSubmit,
       userAnswerMessage,
@@ -209,9 +244,11 @@ const GamePageProvider = (props) => {
       shuffleCards,
       handleChoice,
       gameTimer,
+      isGameTimerRunning,
       handleQuitGame,
       gameMode,
       questionData,
+      userAnswer,
       setUserAnswer,
       handleUserAnswerSubmit,
       userAnswerMessage,

@@ -3,6 +3,7 @@ import { useGamePageContext } from "../../providers/GamePageProvider";
 const MathGame = (props) => {
   const {
     questionData,
+    userAnswer,
     setUserAnswer,
     handleUserAnswerSubmit,
     userAnswerMessage,
@@ -23,6 +24,7 @@ const MathGame = (props) => {
           Answer{" "}
           <input
             type="number"
+            value={userAnswer}
             onChange={(event) => setUserAnswer(event.target.value)}
           />
           <button onClick={handleUserAnswerSubmit}>Submit</button>
