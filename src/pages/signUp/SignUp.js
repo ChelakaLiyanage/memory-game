@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../../utils/firebase";
+
+import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 
 const SignUp = () => {
-  const [username, setUsername] = useState("");
+  const { signUp } = useAuthenticationContext();
+
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,23 +13,7 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
-
-    try {
-      // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      // Set the display name to the entered username
-      await updateProfile(user, { displayName: username });
-
-      alert(`User created: ${user.displayName}`);
-    } catch (error) {
-      setError(error.message);
-    }
+    await signUp(userName, email, password, setError);
   };
 
   return (
@@ -37,8 +23,8 @@ const SignUp = () => {
         <input
           type="text"
           placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
           required
           style={styles.input}
         />

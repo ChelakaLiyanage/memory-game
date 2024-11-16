@@ -1,6 +1,6 @@
 import { useGamePageContext } from "../../providers/GamePageProvider";
 
-const MathGame = (props) => {
+const MathGame = () => {
   const {
     questionData,
     userAnswer,

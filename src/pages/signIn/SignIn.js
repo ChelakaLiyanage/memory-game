@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 
-import { auth } from "../../utils/firebase";
-
 const SignIn = () => {
-  const { completeSignIn } = useAuthenticationContext();
+  const { signIn } = useAuthenticationContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,20 +13,7 @@ const SignIn = () => {
     e.preventDefault();
     setError("");
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      console.log(userCredential);
-
-      alert(`User logged in: ${user.displayName}`);
-      completeSignIn(user.displayName, user.email, user.accessToken);
-    } catch (error) {
-      setError(error.message);
-    }
+    await signIn(email, password, setError);
   };
 
   return (
