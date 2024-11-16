@@ -30,7 +30,9 @@ const MainPage = () => {
       </div>
       <button onClick={startGame}>New Game</button>
       <button>How To Play</button>
-      <button>Leaderboards</button>
+      <button onClick={() => navigate(routeHelper.LEADERBOARD.PATH)}>
+        Leaderboards
+      </button>
       <button onClick={logOut}>Sign Out</button>
     </div>
   );

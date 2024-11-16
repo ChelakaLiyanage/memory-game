@@ -11,4 +11,7 @@ export const routeHelper = Object.freeze({
   GAMEPAGE: {
     PATH: "/game",
   },
+  LEADERBOARD: {
+    PATH: "/leaderboard",
+  },
 });

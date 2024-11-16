@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import GamePage from "./pages/gamePage/GamePage";
 import MainPage from "./pages/mainPage/MainPage";
+import Leaderboard from "./pages/leaderboard/Leaderboard";
 import SignUp from "./pages/signUp/SignUp";
 import SignIn from "./pages/signIn/SignIn";
 
@@ -28,6 +29,10 @@ const App = () => {
           <AuthenticatedWrapper>
             <Routes>
               <Route path={routeHelper.MAINPAGE.PATH} element={<MainPage />} />
+              <Route
+                path={routeHelper.LEADERBOARD.PATH}
+                element={<Leaderboard />}
+              />
               <Route path={routeHelper.GAMEPAGE.PATH} element={<GamePage />} />
             </Routes>
           </AuthenticatedWrapper>

@@ -7,10 +7,11 @@ import {
   useCallback,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 import { routeHelper } from "../helpers/routeHelper";
 
-import { getQuestion } from "../apis/gamePage";
+import { getQuestion, saveGameScore } from "../apis/gamePage";
 
 import { showGameCompleteAlert } from "../utils/alerts";
 
@@ -19,15 +20,17 @@ export const GamePageContext = createContext();
 const cardImages = [
   { src: "/img/BunnyHat.png", matched: false },
   { src: "/img/Coin.png", matched: false },
-  { src: "/img/MagicBall.png", matched: false },
-  { src: "/img/Scroll.png", matched: false },
-  { src: "/img/Shield.png", matched: false },
-  { src: "/img/Sword.png", matched: false },
+  // { src: "/img/MagicBall.png", matched: false },
+  // { src: "/img/Scroll.png", matched: false },
+  // { src: "/img/Shield.png", matched: false },
+  // { src: "/img/Sword.png", matched: false },
 ];
 
 const GamePageProvider = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("userName");
 
   const { children } = props;
   const { difficulty } = location.state || { difficulty: "normal" };
@@ -51,17 +54,20 @@ const GamePageProvider = (props) => {
   const [userAnswer, setUserAnswer] = useState(null);
   const [userAnswerMessage, setUserAnswerMessage] = useState("");
 
-  const fetchQuestionData = async () => {
+  const fetchQuestionData = useCallback(async () => {
+    setIsQuestionLoading(true);
+
     try {
-      setIsQuestionLoading(true);
       const response = await getQuestion();
       setQuestionData(response.data);
     } catch (error) {
+      alert("something went wrong!!!");
+      navigate(routeHelper.MAINPAGE.PATH);
       //error scenario
     } finally {
       setIsQuestionLoading(false);
     }
-  };
+  }, [navigate]);
 
   const calculateGameScore = useCallback(
     (time, turns) => {
@@ -84,13 +90,22 @@ const GamePageProvider = (props) => {
   );
 
   const handleUserAnswerSubmit = useCallback(() => {
+    console.log(userAnswer);
     if (userAnswer) {
       if (parseInt(userAnswer) === questionData.solution) {
         setQuestionData(null);
         setIsGameTimerRunning(false);
+        saveGameScore(
+          uuidv4(),
+          userId,
+          userName,
+          difficulty,
+          calculateGameScore(gameTimer, turns)
+        );
         showGameCompleteAlert(
           `Your score is: ${calculateGameScore(gameTimer, turns)} `,
-          () => navigate(routeHelper.MAINPAGE.PATH)
+          () =>
+            navigate(routeHelper.LEADERBOARD.PATH, { state: { difficulty } })
         );
         setUserAnswerMessage("");
       } else {
@@ -106,6 +121,9 @@ const GamePageProvider = (props) => {
     turns,
     calculateGameScore,
     navigate,
+    difficulty,
+    userId,
+    userName,
   ]);
 
   const shuffleCards = useCallback(() => {
@@ -153,7 +171,7 @@ const GamePageProvider = (props) => {
         await fetchQuestionData();
       }
     }
-  }, [cards, turns]);
+  }, [cards, turns, fetchQuestionData]);
 
   useEffect(() => {
     shuffleCards();
