@@ -103,12 +103,10 @@ const AuthenticationProvider = (props) => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
-      // navigate(routeHelper.MAINPAGE.PATH);
     } else {
       setIsAuthenticated(false);
-      navigate(routeHelper.SIGNIN.PATH);
     }
-  }, [navigate]);
+  }, []);
 
   const values = useMemo(
     () => ({ isAuthenticated, signIn, signUp, logOut }),

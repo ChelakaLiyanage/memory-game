@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import GamePage from "./pages/gamePage/GamePage";
 import MainPage from "./pages/mainPage/MainPage";
@@ -20,22 +20,24 @@ const App = () => {
     <div className="App">
       <BrowserRouter>
         <AuthenticationProvider>
-          <UnAuthenticatedWrapper>
-            <Routes>
+          <Routes>
+            <Route element={<UnAuthenticatedWrapper />}>
               <Route path={routeHelper.SIGNUP.PATH} element={<SignUp />} />
               <Route path={routeHelper.SIGNIN.PATH} element={<SignIn />} />
-            </Routes>
-          </UnAuthenticatedWrapper>
-          <AuthenticatedWrapper>
-            <Routes>
+            </Route>
+            <Route element={<AuthenticatedWrapper />}>
               <Route path={routeHelper.MAINPAGE.PATH} element={<MainPage />} />
               <Route
                 path={routeHelper.LEADERBOARD.PATH}
                 element={<Leaderboard />}
               />
               <Route path={routeHelper.GAMEPAGE.PATH} element={<GamePage />} />
-            </Routes>
-          </AuthenticatedWrapper>
+            </Route>
+            <Route
+              path="*"
+              element={<Navigate to={routeHelper.MAINPAGE.PATH} />}
+            />
+          </Routes>
         </AuthenticationProvider>
       </BrowserRouter>
     </div>

@@ -1,13 +1,16 @@
+import { Navigate, Outlet } from "react-router-dom";
+
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 
-const UnAuthenticatedWrapper = (props) => {
-  const { children } = props;
+import { routeHelper } from "../../helpers/routeHelper";
+
+const UnAuthenticatedWrapper = () => {
   const { isAuthenticated } = useAuthenticationContext();
 
-  if (!isAuthenticated) {
-    return children;
+  if (isAuthenticated) {
+    return <Navigate to={routeHelper.MAINPAGE.PATH} />;
   }
-  return null;
+  return <Outlet />;
 };
 
 export default UnAuthenticatedWrapper;

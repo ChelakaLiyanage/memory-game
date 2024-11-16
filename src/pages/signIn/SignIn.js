@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
+
+import { routeHelper } from "../../helpers/routeHelper";
 
 const SignIn = () => {
   const { signIn } = useAuthenticationContext();
@@ -40,6 +43,9 @@ const SignIn = () => {
           Sign In
         </button>
         {error && <p style={styles.error}>{error}</p>}
+        <Link to={routeHelper.SIGNUP.PATH} style={{ color: "white" }}>
+          Not Registered Yet? Sign Up
+        </Link>
       </form>
     </div>
   );
