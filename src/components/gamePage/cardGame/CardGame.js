@@ -1,4 +1,4 @@
-import { useGamePageContext } from "../../providers/GamePageProvider";
+import { useGamePageContext } from "../../../providers/GamePageProvider";
 
 import SingleCard from "../singleCard/SingleCard";
 

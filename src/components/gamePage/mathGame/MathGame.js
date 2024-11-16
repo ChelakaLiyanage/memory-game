@@ -1,4 +1,4 @@
-import { useGamePageContext } from "../../providers/GamePageProvider";
+import { useGamePageContext } from "../../../providers/GamePageProvider";
 
 const MathGame = () => {
   const {

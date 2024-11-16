@@ -1,6 +1,6 @@
-import { useGamePageContext } from "../../providers/GamePageProvider";
+import { useGamePageContext } from "../../../providers/GamePageProvider";
 
-import { formatTime } from "../../utils/utils";
+import { formatTime } from "../../../utils/utils";
 
 const GameTimer = () => {
   const { gameTimer, isGameTimerRunning } = useGamePageContext();
