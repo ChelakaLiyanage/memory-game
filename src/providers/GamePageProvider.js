@@ -20,10 +20,10 @@ export const GamePageContext = createContext();
 const cardImages = [
   { src: "/img/BunnyHat.png", matched: false },
   { src: "/img/Coin.png", matched: false },
-  // { src: "/img/MagicBall.png", matched: false },
-  // { src: "/img/Scroll.png", matched: false },
-  // { src: "/img/Shield.png", matched: false },
-  // { src: "/img/Sword.png", matched: false },
+  { src: "/img/MagicBall.png", matched: false },
+  { src: "/img/Scroll.png", matched: false },
+  { src: "/img/Shield.png", matched: false },
+  { src: "/img/Sword.png", matched: false },
 ];
 
 const GamePageProvider = (props) => {
