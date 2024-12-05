@@ -7,8 +7,6 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #12121200;
-
-  /* overflow: hidden; */
 }
 html {
   background-image: url(../../public/img/bgimg.png);
@@ -27,7 +25,7 @@ html {
   border: 5px solid #fff;
   border-color: #fff;
   border-radius: 10px;
-  background-color: rgba(30, 30, 30, 0.7);
+  background-color: rgba(30, 30, 30, 0.4);
   backdrop-filter: blur(6px);
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
 }
@@ -43,7 +41,7 @@ html {
   box-sizing: border-box;
   border: 5px solid #fff;
   border-radius: 10px;
-  background-color: rgba(30, 30, 30, 0.7);
+  background-color: rgba(30, 30, 30, 0.4);
   backdrop-filter: blur(6px);
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
 }
@@ -52,7 +50,11 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 60vh;
+  width: 450px;
+  border: 2px solid;
+  background-color: rgba(30, 30, 30, 0.4);
+  backdrop-filter: blur(6px);
 }
 
 .form {
