@@ -3,8 +3,6 @@ import TextField from "@mui/material/TextField";
 
 import { useGamePageContext } from "../../../providers/GamePageProvider";
 
-import gameImage from "./questionExample.png";
-
 const MathGame = () => {
   const {
     questionData,
