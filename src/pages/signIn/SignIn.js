@@ -1,59 +1,90 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 
 import { routeHelper } from "../../helpers/routeHelper";
 
+import { getFirebaseErrorMessage } from "../../utils/utils";
+
+import "../../css/style.css";
+
 const SignIn = () => {
   const { signIn } = useAuthenticationContext();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  //...........................Form Validation............................................................
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setError("");
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    password: Yup.string().required("Password is required"),
+  });
 
-    await signIn(email, password, setError);
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        await signIn(values.email, values.password);
+      } catch (error) {
+        setErrors({ general: getFirebaseErrorMessage(error.code) });
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+
+  //.....................................................................
 
   return (
-    <div style={styles.container}>
-      <form onSubmit={handleSignIn} style={styles.form}>
+    <div className="form-container">
+      <form onSubmit={formik.handleSubmit} className="form">
         <h2>Sign In</h2>
         <TextField
           sx={{ m: 1 }}
-          id="outlined-basic"
+          id="email"
           label="Email"
           variant="outlined"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
         />
         <TextField
           sx={{ m: 1 }}
-          id="outlined-basic"
+          id="password"
           label="Password"
           variant="outlined"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
         />
         <Button
           variant="outlined"
           className="button-white"
           type="submit"
           sx={{ m: 1 }}
+          disabled={formik.isSubmitting}
         >
           Sign In
         </Button>
-        {error && <p style={styles.error}>{error}</p>}
+        {formik.errors.general && (
+          <p style={{ color: "red", fontSize: "14px" }}>
+            {formik.errors.general}
+          </p>
+        )}
         <Link
           to={routeHelper.SIGNUP.PATH}
           style={{ color: "white", fontSize: "16px" }}
@@ -63,25 +94,6 @@ const SignIn = () => {
       </form>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-  },
-  form: { display: "flex", flexDirection: "column", width: "300px" },
-  input: { marginBottom: "10px", padding: "10px", fontSize: "16px" },
-  button: {
-    padding: "10px",
-    backgroundColor: "#6200ea",
-    color: "white",
-    border: "none",
-    cursor: "pointer",
-  },
-  error: { color: "red", fontSize: "14px" },
 };
 
 export default SignIn;
