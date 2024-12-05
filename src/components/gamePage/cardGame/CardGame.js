@@ -1,6 +1,10 @@
+import Button from "@mui/material/Button";
+
 import { useGamePageContext } from "../../../providers/GamePageProvider";
 
 import SingleCard from "../singleCard/SingleCard";
+
+import "../../../css/style.css";
 
 const CardGame = () => {
   const {
@@ -21,7 +25,13 @@ const CardGame = () => {
   return (
     <>
       <h1> Memory Game </h1>
-      <button onClick={handleQuitGame}>Quit Game</button>
+      <Button
+        variant="outlined"
+        className="button-white"
+        onClick={handleQuitGame}
+      >
+        Quit Game
+      </Button>
       <div className="card-grid">
         {cards.map((card) => (
           <SingleCard

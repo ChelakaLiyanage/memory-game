@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Button from "@mui/material/Button";
 
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 
 import { routeHelper } from "../../helpers/routeHelper";
+
+import "../../css/style.css";
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -15,25 +20,48 @@ const MainPage = () => {
   };
 
   return (
-    <div>
+    <div className="mainPage-container">
       <h1>Memory Game</h1>
       <div>
         <label>Select difficulty</label>
-        <select
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value)}
+          sx={{
+            m: 2,
+            minWidth: 150,
+            color: "white",
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#ffffff", // Outline color
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#bdbdbd", // Hover border color
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#bdbdbd", // Focused border color
+            },
+          }}
         >
-          <option value="easy">Easy</option>
-          <option value="normal">Normal</option>
-          <option value="hard">Hard</option>
-        </select>
+          <MenuItem value="easy">Easy</MenuItem>
+          <MenuItem value="normal">Normal</MenuItem>
+          <MenuItem value="hard">Hard</MenuItem>
+        </Select>
       </div>
-      <button onClick={startGame}>New Game</button>
-      <button>How To Play</button>
-      <button onClick={() => navigate(routeHelper.LEADERBOARD.PATH)}>
+      <Button variant="outlined" className="button-white" onClick={startGame}>
+        New Game
+      </Button>
+      <Button
+        variant="outlined"
+        className="button-white"
+        onClick={() => navigate(routeHelper.LEADERBOARD.PATH)}
+      >
         Leaderboards
-      </button>
-      <button onClick={logOut}>Sign Out</button>
+      </Button>
+      <Button variant="outlined" className="button-white" onClick={logOut}>
+        Sign Out
+      </Button>
     </div>
   );
 };

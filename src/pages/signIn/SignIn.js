@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 
@@ -23,27 +25,39 @@ const SignIn = () => {
     <div style={styles.container}>
       <form onSubmit={handleSignIn} style={styles.form}>
         <h2>Sign In</h2>
-        <input
+        <TextField
+          sx={{ m: 1 }}
+          id="outlined-basic"
+          label="Email"
+          variant="outlined"
           type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          style={styles.input}
         />
-        <input
+        <TextField
+          sx={{ m: 1 }}
+          id="outlined-basic"
+          label="Password"
+          variant="outlined"
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={styles.input}
         />
-        <button type="submit" style={styles.button}>
+        <Button
+          variant="outlined"
+          className="button-white"
+          type="submit"
+          sx={{ m: 1 }}
+        >
           Sign In
-        </button>
+        </Button>
         {error && <p style={styles.error}>{error}</p>}
-        <Link to={routeHelper.SIGNUP.PATH} style={{ color: "white" }}>
+        <Link
+          to={routeHelper.SIGNUP.PATH}
+          style={{ color: "white", fontSize: "16px" }}
+        >
           Not Registered Yet? Sign Up
         </Link>
       </form>

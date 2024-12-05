@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
 
 import LeaderboardProvider from "../../providers/LeaderboardProvider";
 
@@ -7,15 +8,21 @@ import LeaderboardFilter from "../../components/leaderboard/LeaderboardFilter";
 
 import { routeHelper } from "../../helpers/routeHelper";
 
+import "../../css/style.css";
+
 const Leaderboard = () => {
   const navigate = useNavigate();
   return (
     <LeaderboardProvider>
-      <div>
+      <div style={{ width: "1000px" }}>
         <h1>Leaderboard</h1>
-        <button onClick={() => navigate(routeHelper.MAINPAGE.PATH)}>
+        <Button
+          variant="outlined"
+          className="button-white"
+          onClick={() => navigate(routeHelper.MAINPAGE.PATH)}
+        >
           Home
-        </button>
+        </Button>
         <LeaderboardFilter />
         <LeaderboardTable />
       </div>

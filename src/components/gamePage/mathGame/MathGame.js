@@ -1,4 +1,9 @@
+import { Button } from "@mui/material";
+import TextField from "@mui/material/TextField";
+
 import { useGamePageContext } from "../../../providers/GamePageProvider";
+
+import gameImage from "./questionExample.png";
 
 const MathGame = () => {
   const {
@@ -20,14 +25,28 @@ const MathGame = () => {
       {isGameLoading && "Loading"}
       {!isGameLoading && questionData && (
         <>
-          <img src={questionData.question} alt="question_img" />
+          <div
+            style={{
+              width: "750px",
+              height: "400px",
+              alignContent: "center",
+            }}
+          >
+            <img src={questionData.question} alt="question_img" />
+          </div>
           Answer{" "}
-          <input
+          <TextField
+            sx={{ m: 1 }}
+            id="outlined-basic"
+            label="Answer"
+            variant="outlined"
             type="number"
             value={userAnswer}
             onChange={(event) => setUserAnswer(event.target.value)}
           />
-          <button onClick={handleUserAnswerSubmit}>Submit</button>
+          <Button variant="outlined" onClick={handleUserAnswerSubmit}>
+            Submit
+          </Button>
           {userAnswerMessage}
         </>
       )}

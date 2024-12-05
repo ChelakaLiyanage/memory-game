@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 
 import { routeHelper } from "../../helpers/routeHelper";
+
+import "../../css/style.css";
 
 const SignUp = () => {
   const { signUp } = useAuthenticationContext();
@@ -20,38 +24,48 @@ const SignUp = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <form onSubmit={handleSignUp} style={styles.form}>
+    <div className="form-container">
+      <form onSubmit={handleSignUp} className="form">
         <h2>Sign Up</h2>
-        <input
+
+        <TextField
+          id="outlined-basic"
+          label="Username"
+          variant="outlined"
           type="text"
-          placeholder="Username"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
           required
-          style={styles.input}
+          sx={{ mb: 2 }}
         />
-        <input
+        <TextField
+          id="outlined-basic"
+          label="Email"
+          variant="outlined"
           type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          style={styles.input}
+          sx={{ mb: 2 }}
         />
-        <input
+        <TextField
+          id="outlined-basic"
+          label="Password"
+          variant="outlined"
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={styles.input}
+          sx={{ mb: 2 }}
         />
-        <button type="submit" style={styles.button}>
+        <Button variant="outlined" type="submit" className="button-white">
           Sign Up
-        </button>
+        </Button>
         {error && <p style={styles.error}>{error}</p>}
-        <Link to={routeHelper.SIGNIN.PATH} style={{ color: "white" }}>
+        <Link
+          to={routeHelper.SIGNIN.PATH}
+          style={{ color: "white", fontSize: "16px" }}
+        >
           Already Have an Account? Sign In
         </Link>
       </form>
@@ -60,21 +74,6 @@ const SignUp = () => {
 };
 
 const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-  },
-  form: { display: "flex", flexDirection: "column", width: "300px" },
-  input: { marginBottom: "10px", padding: "10px", fontSize: "16px" },
-  button: {
-    padding: "10px",
-    backgroundColor: "#6200ea",
-    color: "white",
-    border: "none",
-    cursor: "pointer",
-  },
   error: { color: "red", fontSize: "14px" },
 };
 

@@ -7,7 +7,7 @@ import GameTimer from "../../components/gamePage/gameTimer/GameTimer";
 const GamePage = () => {
   return (
     <GamePageProvider>
-      <div>
+      <div className="gamepage-container">
         <CardGame />
         <MathGame />
         <GameTimer />
