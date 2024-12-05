@@ -48,7 +48,7 @@ const AuthenticationProvider = (props) => {
   }, [navigate]);
 
   const signIn = useCallback(
-    async (email, password, errorHandler) => {
+    async (email, password) => {
       try {
         const userCredential = await signInWithEmailAndPassword(
           auth,
@@ -64,14 +64,14 @@ const AuthenticationProvider = (props) => {
           user.uid
         );
       } catch (error) {
-        errorHandler(error.message);
+        throw error;
       }
     },
     [completeSignIn]
   );
 
   const signUp = useCallback(
-    async (userName, email, password, errorHandler) => {
+    async (userName, email, password) => {
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -84,7 +84,7 @@ const AuthenticationProvider = (props) => {
         alert(`User created: ${user.displayName}`);
         navigate(routeHelper.SIGNIN.PATH);
       } catch (error) {
-        errorHandler(error.message);
+        throw error;
       }
     },
     [navigate]
