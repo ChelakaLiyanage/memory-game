@@ -14,7 +14,18 @@ const Leaderboard = () => {
   const navigate = useNavigate();
   return (
     <LeaderboardProvider>
-      <div style={{ width: "1000px" }}>
+      <div
+        style={{
+          width: "1000px",
+          border: "2px solid #fff",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          paddingBottom: "25px",
+          backgroundColor: "rgba(30, 30, 30, 0.4)",
+          backdropFilter: "blur(6px)",
+        }}
+      >
         <h1>Leaderboard</h1>
         <Button
           variant="outlined"
